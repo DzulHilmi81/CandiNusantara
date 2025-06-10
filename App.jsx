@@ -1,4 +1,3 @@
-// App.jsx
 import React, { useEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -27,7 +26,7 @@ const App = () => {
       const stored = await AsyncStorage.getItem(STORAGE_KEY);
       if (stored) setCandis(JSON.parse(stored));
     } catch (e) {
-      console.error('Failed load:', e);
+      console.error('Gagal memuat data:', e);
     }
   };
 
@@ -35,7 +34,7 @@ const App = () => {
     try {
       await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(candis));
     } catch (e) {
-      console.error('Failed save:', e);
+      console.error('Gagal menyimpan data:', e);
     }
   };
 
@@ -46,10 +45,22 @@ const App = () => {
           {props => <HomeScreen {...props} />}
         </Stack.Screen>
         <Stack.Screen name="Tambah Candi">
-          {props => <AddCandiScreen {...props} setCandis={setCandis} />}
+          {props => (
+            <AddCandiScreen
+              {...props}
+              candis={candis}
+              setCandis={setCandis}
+            />
+          )}
         </Stack.Screen>
         <Stack.Screen name="List Candi">
-          {props => <ListScreen {...props} candis={candis} />}
+          {props => (
+            <ListScreen
+              {...props}
+              candis={candis}
+              setCandis={setCandis}
+            />
+          )}
         </Stack.Screen>
       </Stack.Navigator>
     </NavigationContainer>
