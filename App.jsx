@@ -1,81 +1,59 @@
 // App.jsx
-import React, { useState } from 'react';
-import {
-  SafeAreaView,
-  FlatList,
-  StyleSheet,
-  Text,
-  Button,
-  Alert,
-  View,
-} from 'react-native';
-import CandiCard from './src/components/CandiCard';
-import { candiList as initialCandiList } from './src/data/candiData';
+import React, { useEffect, useState } from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+import HomeScreen from './src/screens/HomeScreen';
+import AddCandiScreen from './src/screens/AddCandiScreen';
+import ListScreen from './src/screens/ListScreen';
+
+const Stack = createNativeStackNavigator();
+const STORAGE_KEY = 'candiData';
 
 const App = () => {
-  const [candis, setCandis] = useState(initialCandiList);
+  const [candis, setCandis] = useState([]);
 
-  const addCandi = () => {
-    const newId = Date.now().toString();
-    const newCandi = {
-      id: newId,
-      nama: 'Candi Baru',
-      lokasi: 'Lokasi Baru',
-    };
-    setCandis(prev => [newCandi, ...prev]);
+  useEffect(() => {
+    loadCandis();
+  }, []);
+
+  useEffect(() => {
+    saveCandis();
+  }, [candis]);
+
+  const loadCandis = async () => {
+    try {
+      const stored = await AsyncStorage.getItem(STORAGE_KEY);
+      if (stored) setCandis(JSON.parse(stored));
+    } catch (e) {
+      console.error('Failed load:', e);
+    }
   };
 
-  const handlePress = item => {
-    Alert.alert('Candi Dipilih', `${item.nama}\nLokasi: ${item.lokasi}`);
+  const saveCandis = async () => {
+    try {
+      await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(candis));
+    } catch (e) {
+      console.error('Failed save:', e);
+    }
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <Text style={styles.title}>
-        CandiNusa – Eksplorasi Keindahan Seni Candi Nusantara
-      </Text>
-
-      <View style={styles.buttonContainer}>
-        <Button title="Tambah Candi" onPress={addCandi} color="#8b0000" />
-      </View>
-
-      <FlatList
-        data={candis}
-        keyExtractor={item => item.id}
-        renderItem={({ item }) => (
-          <CandiCard
-            nama={item.nama}
-            lokasi={item.lokasi}
-            onPress={() => handlePress(item)}
-          />
-        )}
-        contentContainerStyle={styles.listContainer}
-      />
-    </SafeAreaView>
+    <NavigationContainer>
+      <Stack.Navigator>
+        <Stack.Screen name="Beranda">
+          {props => <HomeScreen {...props} />}
+        </Stack.Screen>
+        <Stack.Screen name="Tambah Candi">
+          {props => <AddCandiScreen {...props} setCandis={setCandis} />}
+        </Stack.Screen>
+        <Stack.Screen name="List Candi">
+          {props => <ListScreen {...props} candis={candis} />}
+        </Stack.Screen>
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fffaf0',
-    paddingHorizontal: 16,
-    paddingTop: 32,
-  },
-  title: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    marginBottom: 12,
-    textAlign: 'center',
-    color: '#6b3e26',
-  },
-  buttonContainer: {
-    marginBottom: 16,
-    alignItems: 'center',
-  },
-  listContainer: {
-    paddingBottom: 24,
-  },
-});
 
 export default App;
