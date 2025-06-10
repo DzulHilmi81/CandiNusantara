@@ -1,3 +1,4 @@
+// App.jsx
 import React, { useState } from 'react';
 import {
   SafeAreaView,
@@ -6,15 +7,14 @@ import {
   Text,
   Button,
   Alert,
+  View,
 } from 'react-native';
 import CandiCard from './src/components/CandiCard';
 import { candiList as initialCandiList } from './src/data/candiData';
 
 const App = () => {
-  // 1. State untuk daftar candi
   const [candis, setCandis] = useState(initialCandiList);
 
-  // 2. Fungsi nambah candi baru
   const addCandi = () => {
     const newId = Date.now().toString();
     const newCandi = {
@@ -25,7 +25,6 @@ const App = () => {
     setCandis(prev => [newCandi, ...prev]);
   };
 
-  // 3. Callback saat card ditekan
   const handlePress = item => {
     Alert.alert('Candi Dipilih', `${item.nama}\nLokasi: ${item.lokasi}`);
   };
@@ -36,10 +35,10 @@ const App = () => {
         CandiNusa – Eksplorasi Keindahan Seni Candi Nusantara
       </Text>
 
-      {/* Tombol yang memicu perubahan state */}
-      <Button title="Tambah Candi" onPress={addCandi} />
+      <View style={styles.buttonContainer}>
+        <Button title="Tambah Candi" onPress={addCandi} color="#8b0000" />
+      </View>
 
-      {/* FlatList menggunakan state candis */}
       <FlatList
         data={candis}
         keyExtractor={item => item.id}
@@ -50,7 +49,7 @@ const App = () => {
             onPress={() => handlePress(item)}
           />
         )}
-        contentContainerStyle={{ paddingVertical: 16 }}
+        contentContainerStyle={styles.listContainer}
       />
     </SafeAreaView>
   );
@@ -59,16 +58,23 @@ const App = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff8e7',
+    backgroundColor: '#fffaf0',
     paddingHorizontal: 16,
     paddingTop: 32,
   },
   title: {
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: 'bold',
-    marginBottom: 16,
+    marginBottom: 12,
     textAlign: 'center',
-    color: '#7c4700',
+    color: '#6b3e26',
+  },
+  buttonContainer: {
+    marginBottom: 16,
+    alignItems: 'center',
+  },
+  listContainer: {
+    paddingBottom: 24,
   },
 });
 
