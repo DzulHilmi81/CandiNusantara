@@ -6,6 +6,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   Alert,
+  Image,
 } from 'react-native';
 import { deleteCandi } from '../data/api';
 
@@ -49,6 +50,9 @@ const ListScreen = ({ candis, setCandis }) => {
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
           <View style={styles.card}>
+            {item.gambar && (
+              <Image source={{ uri: item.gambar }} style={styles.image} />
+            )}
             <View style={{ flex: 1 }}>
               <Text style={styles.nama}>{item.nama}</Text>
               <Text style={styles.lokasi}>{item.lokasi}</Text>
@@ -87,6 +91,12 @@ const styles = StyleSheet.create({
   deleteText: {
     color: 'white',
     fontWeight: 'bold',
+  },
+  image: {
+    width: 60,
+    height: 60,
+    borderRadius: 8,
+    marginRight: 10,
   },
 });
 
